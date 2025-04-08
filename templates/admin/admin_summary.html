@@ -1,0 +1,301 @@
+{% extends 'admin/admin_layout.html' %}
+
+{% block title %}
+    Admin Summary
+{% endblock %}
+
+{% block content %}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<style>
+    .container {
+        margin-top: 50px;
+    }
+    .stats-container {
+        padding-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .stat-card {
+        flex: 1;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .stat-card h3 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    .stat-card p {
+        font-size: 1.2rem;
+        color: #e0e0e0;
+    }
+    .chart-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+    .chart-container {
+        flex: 1;
+        min-width: 45%;
+        max-width: 650px;
+        min-width: 400px;
+        max-height: 500px;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        flex-wrap: wrap;
+        display: flex;
+    }
+    .chart-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .chart-container h5 {
+        text-align: center;
+
+        margin-bottom: 20px;
+        font-size: 1.7rem;
+        color: #333333;
+    }
+</style>
+
+<div class="container">
+    <h1 class="text-center">Admin Summary</h1>
+
+    <!-- Top Statistics -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>{{ total_students }}</h3>
+            <p>Registered Students</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ total_chapters }}</h3>
+            <p>Chapters</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ total_subjects }}</h3>
+            <p>Subjects</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ total_quizzes }}</h3>
+            <p>Quizzes</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ total_questions }}</h3>
+            <p>Questions</p>
+        </div>
+    </div>
+
+    <!-- Graphs -->
+    <div class="chart-row">
+        <!-- Pie Chart: Flagged vs Unflagged Users -->
+        <div class="chart-container">
+            <h5>Flagged vs Unflagged Users</h5>
+            <canvas id="flaggedUsersChart"></canvas>
+        </div>
+            <!-- Radar Chart: Subject-wise Chapters -->
+            <div class="chart-container">
+                <h5>Subject-wise Chapters</h5>
+                <canvas id="subjectQuestionsPieChart"></canvas>
+            </div>
+
+    </div>
+
+    <div class="chart-row">
+        <!-- Bar Graph: Subject-wise Questions -->
+        <div class="chart-container">
+            <h5>Subject-wise Questions</h5>
+            <canvas id="subjectQuestionsChart"></canvas>
+        </div>
+
+        <!-- Line Graph: Subject-wise Quizzes -->
+        <div class="chart-container">
+            <h5>Subject-wise Quizzes</h5>
+            <canvas id="subjectQuizzesChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-row">
+        <!-- Bar Graph: Quiz-wise Students Attempted -->
+        <div class="chart-container">
+            <h5>Quiz-wise Students Attempted</h5>
+            <canvas id="quizStudentsChart"></canvas>
+        </div>
+                <!-- Bar Graph: Subject-wise Performance -->
+        <div class="chart-container">
+            <h5>Subject-wise Performance Report</h5>
+            <canvas id="subjectPerformanceChart"></canvas>
+        </div>
+    </div>
+
+    
+</div>
+
+<script>
+    // Pie Chart: Flagged vs Unflagged Users
+    const flaggedUsersCtx = document.getElementById('flaggedUsersChart').getContext('2d');
+    const flaggedUsersChart = new Chart(flaggedUsersCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Unflagged Users', 'Flagged Users'],
+            datasets: [{
+                data: [{{ unflagged_users }}, {{ flagged_users }}],
+                backgroundColor: ['#28a745', '#dc3545'],
+                borderColor: ['#ffffff', '#ffffff'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // Bar Graph: Subject-wise Performance
+    const subjectPerformanceCtx = document.getElementById('subjectPerformanceChart').getContext('2d');
+    const subjectPerformanceChart = new Chart(subjectPerformanceCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ subject_labels | safe }},
+            datasets: [{
+                label: 'Average Score (%)',
+                data: {{ subject_scores | safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true, max: 100 }
+            }
+        }
+    });
+
+    // Bar Graph: Subject-wise Questions
+    const subjectQuestionsCtx = document.getElementById('subjectQuestionsChart').getContext('2d');
+    const subjectQuestionsChart = new Chart(subjectQuestionsCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ subject_labels | safe }},
+            datasets: [{
+                label: 'Number of Questions',
+                data: {{ subject_questions | safe }},
+                backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Line Graph: Subject-wise Quizzes
+    const subjectQuizzesCtx = document.getElementById('subjectQuizzesChart').getContext('2d');
+    const subjectQuizzesChart = new Chart(subjectQuizzesCtx, {
+        type: 'line',
+        data: {
+            labels: {{ subject_labels | safe }},
+            datasets: [{
+                label: 'Number of Quizzes',
+                data: {{ subject_quizzes | safe }},
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Bar Graph: Quiz-wise Students Attempted
+    const quizStudentsCtx = document.getElementById('quizStudentsChart').getContext('2d');
+    const quizStudentsChart = new Chart(quizStudentsCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ quiz_labels | safe }},
+            datasets: [{
+                label: 'Students Attempted',
+                data: {{ quiz_students | safe }},
+                backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+        // Pie Chart: Subject-wise Questions
+    const subjectQuestionsPieCtx = document.getElementById('subjectQuestionsPieChart').getContext('2d');
+    const subjectQuestionsPieChart = new Chart(subjectQuestionsPieCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ subject_labels | safe }}, // Subject names
+            datasets: [{
+                label: 'Number of Questions',
+                data: {{ subject_questions | safe }}, // Number of questions per subject
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+</script>
+{% endblock %}

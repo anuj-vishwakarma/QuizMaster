@@ -1,0 +1,255 @@
+{% extends 'admin/admin_layout.html' %}
+
+{% block title %}
+Search Results for "{{ query }}"
+{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .subject-tile {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .details-btn {
+        color: rgb(17, 2, 2);
+        border: none;
+        padding: 3px 3px;
+        border-radius: 5px;
+        border: 1px solid rgb(173, 173, 17);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .details-content {
+        display: none;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Search Results for "{{ query }}"</h1>
+
+    <!-- Subjects -->
+{% if subjects %}
+    <div class="row">
+        {% for subject in subjects %}
+        <div class="col-md-6">
+            <div class="subject-tile">
+                <h4>{{ subject.name }}</h4>
+                <button class="details-btn" onclick="toggleDetails(this)">
+                    Details <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="details-content">
+                    <p><strong>Subject Name:</strong> {{ subject.name }}</p>
+                    <p><strong>Description:</strong> {{ subject.Description }}</p>
+                    <p><strong>Category:</strong> {{ subject.category }}</p>
+                    <a href="{{ url_for('edit_subject', subject_id=subject.id) }}" class="btn btn-sm btn-warning">Edit
+                        Subject </a>
+                    <form action="{{ url_for('delete_subject', subject_id=subject.id) }}" method="POST"
+                        style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete Subject</button>
+                    </form>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Add Quiz</th>
+                            <th>Chapter Name</th>
+                            <th>No. of Questions</th>
+                            <th>Details</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for chapter in subject.chapters %}
+                        <tr>
+                            <td><a href="{{ url_for('add_quiz', chapter_id = chapter.id) }}"
+                                    class="btn btn-sm btn-warning">+ Quiz</a></td>
+                            <td>{{ chapter.name }}</td>
+                            <td>{{ chapter.no_of_questions }}</td>
+                            <td> <a href="{{ url_for('view_chapter', chapter_id = chapter.id) }}"
+                                    class="btn btn-sm btn-info">View</a></td>
+                            <td>
+                                <a href="{{ url_for('edit_chapter', chapter_id = chapter.id) }}"
+                                    class="btn btn-sm btn-warning">Edit</a>
+                                <form action="{{ url_for('delete_chapter', chapter_id=chapter.id) }}" method="POST"
+                                    style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="/admin/manage_chapter/{{ subject.id }}" class="btn btn-primary" id="chapter_btn">+ Chapter</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<a href="{{ url_for('add_subject') }}" class="add-subject-btn">
+</a>
+{% endif %}
+
+<!-- Chapters -->
+{% if chapters %}
+<h2 class="mt-4">Chapters</h2>
+<div class="row">
+    {% for chapter in chapters %}
+
+    <div class="col-md-6">
+        <div class="subject-tile">
+            <h4>{{ chapter.name }}</h4>
+
+            <div class="details">
+                <p><strong>Chapter Name:</strong> {{ chapter.name }}</p>
+                <p><strong>Subject Name:</strong> {{ chapter.subject.name }}</p>
+                <p><strong>No. of Questions:</strong> {{ chapter.no_of_questions }}</p>
+                <p><strong>Description:</strong> {{ chapter.Description }}</p>
+                <a href="{{ url_for('view_chapter', chapter_id = chapter.id) }}" class="btn btn-sm btn-info">View</a>
+                <a href="{{ url_for('edit_chapter', chapter_id=chapter.id) }}" class="btn btn-sm btn-warning">Edit
+                    Chapter</a>
+                <form action="{{ url_for('delete_chapter', chapter_id=chapter.id) }}" method="POST"
+                    style="display: inline;">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete Chapter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Quizzes -->
+{% if quizzes %}
+<h2 class="mt-4">Quizzes</h2>
+<div class="row">
+    {% for quiz in quizzes %}
+    <div class="col-md-6">
+        <div class="subject-tile">
+            <h4>{{ quiz.name }}</h4>
+            <button class="details-btn" onclick="toggleDetails(this)">
+                Details <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="details-content">
+                <p><strong>Chapter Name:</strong> {{ quiz.chapter.name }}</p>
+                <p><strong>Start Date:</strong> {{ quiz.start_date }}</p>
+                <p><strong>End Date:</strong> {{ quiz.end_date }}</p>
+                <p><strong>Time Duration:</strong> {{ quiz.time_duration }}</p>
+                <p><strong>No Of Questions:</strong> {{ quiz.no_of_questions }}</p>
+                <p><strong>Description:</strong> {{ quiz.Description }}</p>
+                <p><strong>Active Status:</strong> {{ quiz.is_active }}</p>
+                <a href="{{ url_for('edit_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-warning">Edit Quiz</a>
+                <form action="{{ url_for('delete_quiz', quiz_id=quiz.id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete Quiz</button>
+                </form>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Q_Title</th>
+                        
+
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for question in quiz.questions %}
+                    <tr>
+                        <td>{{ question.id }}</td>
+                        <td>{{ question.title }}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('edit_question', question_id=question.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <form action="{{ url_for('delete_question', question_id=question.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="/admin/manage_question/{{ quiz.id }}" class="btn btn-primary" id="chapter_btn">+ Question</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+{% endif %}
+
+<!-- Questions -->
+{% if questions %}
+<h2 class="mt-4">Questions</h2>
+ {% for question in questions %}     
+<div class="subject-tile">
+    <h4>{{ question.title }}</h4>
+    <div class="details">
+        <p><strong>Quiz Name:</strong> {{ question.quiz.name }}</p>
+        <p><strong>Question ID:</strong> {{ question.id }}</p>
+        <p><strong>Question Title:</strong> {{ question.title }}</p>
+        <p><strong>Question Statement:</strong> {{ question.question_statement }}</p>
+        <p><strong>Option 1:</strong> {{ question.option1 }}</p>
+        <p><strong>Option 2:</strong> {{ question.option2 }}</p>
+        <p><strong>Option 3:</strong> {{ question.option3 }}</p>
+        <p><strong>Option 4:</strong> {{ question.option4 }}</p>
+        <p><strong>Correct Option:</strong> Option {{ question.correct_option }}</p>
+        <a href="{{ url_for('edit_question', question_id=question.id) }}" class="btn btn-sm btn-warning">Edit</a>
+        <form action="{{ url_for('delete_question', question_id=question.id) }}" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if users %}
+<h2 class="mt-4">Users</h2>
+<div class="row">
+    {% for user in users %}
+    <div class="col-md-6">
+        <div class="subject-tile">
+            <h4>{{ user.name }} @{{user.username}}</h4>
+            <p><strong>User ID:</strong> {{ user.id }}</p>
+            <p><strong>No. of Quizzes Done:</strong> {{ user.scores|length }}</p>
+            <p><strong>Average Score:</strong> {{ (user.scores|map(attribute='score')|sum / user.scores|length) if user.scores|length > 0 else 0 }}</p>
+            <a href="{{ url_for('flag_user', user_id=user.id) }}" class="btn btn-sm btn-warning">Flag</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- No Results Found -->
+{% if not (subjects or chapters or quizzes or questions or users) %}
+<p class="text-center mt-5">No results found for "{{ query }}".</p>
+{% endif %}
+</div>
+
+<script>
+    function toggleDetails(button) {
+        const detailsContent = button.nextElementSibling;
+        if (detailsContent.style.display === "none" || detailsContent.style.display === "") {
+            detailsContent.style.display = "block";
+            button.querySelector("i").classList.remove("fa-chevron-down");
+            button.querySelector("i").classList.add("fa-chevron-up");
+        } else {
+            detailsContent.style.display = "none";
+            button.querySelector("i").classList.remove("fa-chevron-up");
+            button.querySelector("i").classList.add("fa-chevron-down");
+        }
+    }
+</script>
+
+{% endblock %}

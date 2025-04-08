@@ -1,0 +1,234 @@
+{% extends 'user/user_layout.html' %}
+ {% block title %}
+  Search Results for "{{query }}" {% endblock %} 
+  {% block content %}
+    <style>
+
+    /* General Container Styling */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Section Headings */
+    h2 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 5px;
+    }
+
+    /* Subject Tile Styling */
+    .subject-tile {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .subject-tile:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .subject-tile h5 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1565c0;
+    }
+
+    .subject-tile p {
+        font-size: 1rem;
+        color: #424242;
+    }
+
+    .subject-tile .card-footer {
+        background: #e3f2fd;
+        border-top: 1px solid #bbdefb;
+        padding: 10px;
+        border-radius: 0 0 15px 15px;
+    }
+
+    /* Chapter Tile Styling */
+    .chapter-tile {
+        background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chapter-tile:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .chapter-tile h5 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ad1457;
+    }
+
+    .chapter-tile p {
+        font-size: 1rem;
+        color: #424242;
+    }
+
+    .chapter-tile .card-footer {
+        background: #fce4ec;
+        border-top: 1px solid #f8bbd0;
+        padding: 10px;
+        border-radius: 0 0 15px 15px;
+    }
+
+    /* Quiz Card Styling */
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+        color: #616161;
+    }
+
+    .btn-primary {
+        
+        border: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #1e88e5;
+        transform: translateY(-2px);
+    }
+
+    /* No Results Styling */
+    .no-results {
+        font-size: 1.5rem;
+        color: #757575;
+        text-align: center;
+        margin-top: 50px;
+    }
+    .mb-4{
+        margin-bottom: 1.5rem !important;
+        text-align: center;
+    }
+</style>
+<div class="container mt-5">
+    <h1 class="mb-4">Search Results for "{{ query }}"</h1>
+
+    <!-- Subjects -->
+    {% if subjects %}
+    <h2 class="mt-4">Subjects</h2>
+    <div class="row">
+        {% for subject in subjects %}
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ subject.name }}</h5>
+                    <p class="card-text">Description: {{ subject.description }}</p>
+                    <p class="card-text">Category: {{ subject.category }}</p>
+                </div>
+                <div class="card-footer">
+                    <h6>Quizzes in Subject:</h6>
+                    {% for chapter in subject.chapters %}
+                    <div class="card-footer">
+                        <h6>Quizzes in Chapter: {{chapter.name}}</h6>
+                        {% for quiz in chapter.quizzes %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ quiz.name }}</h6>
+                                <p class="card-text">Chapter: {{ chapter.name }}</p>
+                                <p class="card-text">Start Date: {{ quiz.start_date }}</p>
+                                <p class="card-text">End Date: {{ quiz.end_date }}</p>
+                                <a href="{{ url_for('view_quiz', quiz_id=quiz.id) }}"
+                                    class="btn btn-primary btn-sm">View Quiz</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Chapters -->
+    {% if chapters %}
+    <h2 class="mt-4">Chapters</h2>
+    <div class="row">
+        {% for chapter in chapters %}
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ chapter.name }}</h5>
+                    <p class="card-text">Subject: {{ chapter.subject.name }}</p>
+                    <p class="card-text">Description: {{ chapter.description }}</p>
+                </div>
+                <div class="card-footer">
+                    <h6>Quizzes in Chapter: {{chapter.name}}</h6>
+                    {% for quiz in chapter.quizzes %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ quiz.name }}</h6>
+                            <p class="card-text">Start Date: {{ quiz.start_date }}</p>
+                            <p class="card-text">End Date: {{ quiz.end_date }}</p>
+                            <a href="{{ url_for('view_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">View
+                                Quiz</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Quizzes -->
+    {% if quizzes %}
+    <h2 class="mt-4">Quizzes</h2>
+    <div class="row">
+        {% for quiz in quizzes %}
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ quiz.name }}</h5>
+                    <p class="card-text">Start Date: {{ quiz.start_date }}</p>
+                    <p class="card-text">End Date: {{ quiz.end_date }}</p>
+                    <p class="card-text">Description: {{ quiz.description }}</p>
+                    <a href="{{ url_for('view_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">View Quiz</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- No Results Found -->
+    {% if not (subjects or chapters or quizzes) %}
+    <p class="text-center mt-5">No results found for "{{ query }}".</p>
+    {% endif %}
+</div>
+{% endblock %}

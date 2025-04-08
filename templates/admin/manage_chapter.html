@@ -1,0 +1,84 @@
+
+{% extends 'admin/admin_layout.html' %}
+{% block title %}
+{% endblock %}
+{% block content %}
+    <style>
+        h1 {
+            text-align: center;
+            color: #321710;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .form {
+            width: 50%;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #321710;
+            
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            font-size: 16px;
+            border: 1px solid #860505;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .container{
+            margin-top: 50px;
+            width: 70%;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+
+        }
+    </style>
+    {% if usage == 'add' %}
+    <div class="container">
+        <h1>Add Chapter to {{ subject.name}} </h1>
+        <form action="" class="form" method="post">
+            <div class="form-group" id="subject">
+                <label for="subject" class="form-label">Chapter Name</label>
+                <input type="text" name="chapter_name" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="description" style="width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc;" rows="4" ></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Add</button>  
+            </div>
+        </form>
+    </div>
+
+    {% elif usage == 'edit' %}
+    <div class="container">
+        <h1>Edit Chapter </h1>
+        <form action="" class="form" method="post">
+            <div class="form-group" id="subject">
+                <label for="subject" class="form-label">Chapter Name</label>
+                <input type="text" name="chapter_name" required class="form-control" value="{{ chapter.name }}">    
+            </div>
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="description" style="width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc;" rows="4">{{ chapter.Description }}</textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+{% endblock %}

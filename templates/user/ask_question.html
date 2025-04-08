@@ -1,0 +1,258 @@
+{% extends "user/user_layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 border-0">
+        <h2 class="text-center text-primary fw-bold">Ask a Question & Prepare for Quiz</h2>
+        <h4 class="text-center text-secondary">Select the difficulty level and get questions on the topic!</h4>
+
+        <!-- Tabs for Text Input & Image Upload -->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <a class="nav-link active" id="text-tab" href="#">Text Input</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="image-tab" href="#">Image Upload</a>
+            </li>
+        </ul>
+
+        <!-- Text Input Form -->
+        <div id="text-form">
+            <form id="question-form" method="POST">
+                <div class="mb-3">
+                    <label for="question" class="form-label">Enter your question/topic</label>
+                    <input type="text" class="form-control" id="question" name="question" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="difficulty" class="form-label">Select Difficulty Level</label>
+                    <select class="form-select" id="difficulty" name="difficulty" required>
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Get Questions</button>
+            </form>
+
+            <!-- Result Section for Text-based Questions -->
+            <div class="mt-4">
+                <h4 class="text-primary">Quiz Questions & Answers</h4>
+                <div id="question-result-container"></div>
+
+                <!-- Chat Section for Further Questions -->
+                <div id="chat-window" class="mt-4" style="display:none;">
+                    <h5 class="text-secondary">Ask More About This Result</h5>
+                    <div id="chat-history" class="border p-3" style="max-height: 200px; overflow-y: auto; background-color: #f8f9fa;">
+                        <!-- Chat history will appear here -->
+                    </div>
+                    <form id="chat-form">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="chat-input" placeholder="Want More Question?" required>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Upload Form -->
+        <div id="image-form" style="display: none;">
+            <form id="image-upload-form" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="image" class="form-label">Upload an Image</label>
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Analyze Image</button>
+            </form>
+
+            <!-- Result Section for Image Analysis -->
+            <div class="mt-4">
+                <h4 class="text-primary">Image Analysis Result</h4>
+                <div id="image-result-container"></div>
+
+                <!-- Chat Section for Further Questions -->
+                <div id="chat-window-image" class="mt-4" style="display:none;">
+                    <h5 class="text-secondary">Ask More About This Image</h5>
+                    <div id="chat-history-image" class="border p-3" style="max-height: 200px; overflow-y: auto; background-color: #f8f9fa;">
+                        <!-- Chat history for image result -->
+                    </div>
+                    <form id="chat-form-image">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="chat-input-image" placeholder="Ask something more about the image..." required>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const textTab = document.getElementById("text-tab");
+        const imageTab = document.getElementById("image-tab");
+        const textForm = document.getElementById("text-form");
+        const imageForm = document.getElementById("image-form");
+    
+        // Toggle between Text Input and Image Upload
+        textTab.addEventListener("click", function () {
+            textForm.style.display = "block";
+            imageForm.style.display = "none";
+            textTab.classList.add("active");
+            imageTab.classList.remove("active");
+        });
+    
+        imageTab.addEventListener("click", function () {
+            textForm.style.display = "none";
+            imageForm.style.display = "block";
+            imageTab.classList.add("active");
+            textTab.classList.remove("active");
+        });
+    
+        // Handle Text-based Question Submission
+        document.getElementById("question-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const question = document.getElementById("question").value;
+            const difficulty = document.getElementById("difficulty").value;
+            const resultContainer = document.getElementById("question-result-container");
+            const chatWindow = document.getElementById("chat-window");
+            const chatHistory = document.getElementById("chat-history");
+    
+            resultContainer.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+    
+            fetch("/user/ask_question", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    question: question,
+                    difficulty: difficulty,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const responseText = data.response ? formatTextResponse(data.response) : "No response available.";
+                    resultContainer.innerHTML = responseText
+                        .split("\n\n")
+                        .map(
+                            (block) =>
+                                `<div class='question-block'>${block.replace(/\n/g, "")}</div>`
+                        )
+                        .join("");
+                    chatWindow.style.display = "block"; // Show chat window
+                    chatHistory.innerHTML = ""; // Clear chat history
+                })
+                .catch((error) => {
+                    resultContainer.innerHTML = '<div class="alert alert-danger">An error occurred. Please try again.</div>';
+                    console.error("Error:", error);
+                });
+        });
+    
+        // Handle Image Upload and Analysis Submission
+        document.getElementById("image-upload-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append("image", document.getElementById("image").files[0]);
+    
+            const resultContainer = document.getElementById("image-result-container");
+            const chatWindow = document.getElementById("chat-window-image");
+            const chatHistory = document.getElementById("chat-history-image");
+    
+            resultContainer.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+    
+            fetch("/analyze_image", {
+                method: "POST",
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const responseText = data.response ? formatTextResponse(data.response) : "No response available.";
+                    resultContainer.innerHTML = `<p>${responseText}</p>`; // Properly set innerHTML
+                    chatWindow.style.display = "block"; // Show chat window
+                    chatHistory.innerHTML = ""; // Clear chat history
+                })
+                .catch((error) => {
+                    resultContainer.innerHTML = '<div class="alert alert-danger">An error occurred. Please try again.</div>';
+                    console.error("Error:", error);
+                });
+        });
+    
+        // Handle further chat input (for text-based questions)
+        document.getElementById("chat-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const chatInput = document.getElementById("chat-input").value;
+            const chatHistory = document.getElementById("chat-history");
+    
+            // Show the user's question in chat history
+            chatHistory.innerHTML += `<div><b>You:</b> ${chatInput}</div>`;
+    
+            // Now send this question along with the previous result context
+            fetch("/continue_chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    chat_input: chatInput,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const responseText = data.response ? formatTextResponse(data.response) : "No response available.";
+                    chatHistory.innerHTML += `<div><b>AI:</b> ${responseText}</div>`;
+                    chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to bottom
+                })
+                .catch((error) => {
+                    chatHistory.innerHTML += '<div class="alert alert-danger">An error occurred. Please try again.</div>';
+                    console.error("Error:", error);
+                });
+    
+            // Clear the chat input field
+            document.getElementById("chat-input").value = "";
+        });
+    
+        // Handle further chat input for image analysis
+        document.getElementById("chat-form-image").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const chatInput = document.getElementById("chat-input-image").value;
+            const chatHistory = document.getElementById("chat-history-image");
+    
+            // Show the user's question in chat history
+            chatHistory.innerHTML += `<div><b>You:</b> ${chatInput}</div>`;
+    
+            // Now send this question along with the image context
+            fetch("/continue_chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    chat_input: chatInput,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const responseText = data.response ? formatTextResponse(data.response) : "No response available.";
+                    chatHistory.innerHTML += `<div><b>AI:</b> ${responseText}</div>`;
+                    chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to bottom
+                })
+                .catch((error) => {
+                    chatHistory.innerHTML += '<div class="alert alert-danger">An error occurred. Please try again.</div>';
+                    console.error("Error:", error);
+                });
+    
+            // Clear the chat input field
+            document.getElementById("chat-input-image").value = "";
+        });
+    
+        // Format text responses (handling new lines and cleaning up)
+        function formatTextResponse(text) {
+            return text.replace(/\n/g, "<br>").replace(/\*/g, ""); // Remove stars, replace newlines with <br>
+        }
+    });
+</script>
+
+{% endblock %}

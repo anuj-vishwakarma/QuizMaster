@@ -1,0 +1,187 @@
+{% extends 'admin/admin_layout.html' %}
+
+{% block title %}
+    View Question
+{% endblock %}
+
+{% block content %}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+     <!-- Bootstrap CSS -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+     <!-- Bootstrap JavaScript -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+ 
+
+</head>
+
+<style>
+    /* Question Modal Container */
+    .question-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    .question-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+
+    /* Table-Like Layout */
+    .question-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px 0;
+    }
+
+    .question-label {
+        font-weight: bold;
+        color: #2980b9;
+        font-size: 16px;
+        width: 50%;
+        text-align: right;
+        padding-right: 10px;
+    }
+
+    .question-field {
+        background-color: #e8f6ff;
+        border: 1px solid #3498db;
+        padding: 6px 12px;
+        border-radius: 5px;
+        min-width: 200px;
+        max-width: 300px;
+        text-align: center;
+        font-weight: bold;
+        color: #2c3e50;
+        overflow: hidden; /* Hide overflow */
+        word-wrap: break-word; /* Allow breaking long words */
+        white-space: normal; /* Ensure wrapping */
+        overflow-wrap: break-word; /* Additional word-break support */
+    }
+    
+    /* Buttons Section */
+    .question-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px; /* Add spacing between buttons */
+        margin-top: 20px;
+    }
+
+    .btn-custom-close {
+        background-color: #5dade2; /* Light blue */
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-custom-close:hover {
+        background-color: #2e86c1; /* Darker blue on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    .btn-custom-edit {
+        background-color: #007bff; /* Bootstrap primary blue */
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-custom-edit:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    .btn-custom-delete {
+        background-color: #e74c3c; /* Red for delete */
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-custom-delete:hover {
+        background-color: #c0392b; /* Darker red on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+</style>
+
+<!-- Question Modal Container -->
+<div class="question-container">
+    <div class="question-title">Question Details</div>
+
+    <div class="question-row">
+        <span class="question-label">ID :</span>
+        <span class="question-field">{{ question.id }}</span>
+    </div>
+
+    <div class="question-row">
+        <span class="question-label">Question Title :</span>
+        <span class="question-field">{{ question.title }}</span>
+    </div>
+
+    <div class="question-row">
+        <span class="question-label">Quiz :</span>
+        <span class="question-field">{{ question.quiz.name }}</span>
+    </div>
+    
+    <div class="question-row">
+        <span class="question-label">Chapter :</span>
+        <span class="question-field">{{ question.chapter.name }}</span>
+    </div>
+    <div class="question-row">
+        <span class="question-label">Subject :</span>
+        <span class="question-field">{{ question.chapter.subject.name }}</span>
+    </div>
+    <div class="question-row">
+        <span class="question-label">Option 1 :</span>
+        <span class="question-field">{{ question.option1 }}</span>
+    </div>
+    <div class="question-row">
+        <span class="question-label">Option 2 :</span>
+        <span class="question-field">{{ question.option2 }}</span>
+    </div>
+    <div class="question-row">
+        <span class="question-label">Option 3 :</span>
+        <span class="question-field">{{ question.option3 }}</span>
+    </div>
+    <div class="question-row">
+        <span class="question-label">Option 4 :</span>
+        <span class="question-field">{{ question.option4 }}</span>
+    </div>
+    <div class="question-row">
+        <span class="question-label">Correct Option :</span>
+        <span class="question-field">Option {{ question.correct_option }}</span>
+    </div>
+
+    <!-- Buttons -->
+    <div class="question-buttons">
+        <a href="{{ url_for('quiz_dashboard') }}" class="btn btn-custom-close">Close</a>
+        <a href="{{ url_for('edit_question', question_id=question.id) }}" class="btn btn-custom-edit">Edit</a>
+        <form action="{{ url_for('delete_question', question_id=question.id) }}" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-custom-delete">Delete</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

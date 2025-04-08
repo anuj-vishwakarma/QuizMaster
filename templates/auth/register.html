@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Register - Quizmaster
+{% endblock %}
+
+{% block style %}
+<style>
+    /* General Styling */
+    body {
+        background: url("{{ url_for('static', filename='login_background.jpg') }}") 
+                    no-repeat center center fixed;
+        background-size: cover;
+        height: 100vh; /* Ensure the body height matches the viewport */
+        margin: 0;
+        position: relative;
+    }
+
+    .register-container {
+        display: flex;
+        justify-content: right;
+        align-items: right;
+        height: 100vh;
+        padding: 20px; /* Add padding to prevent the card from touching the edges */
+        position: relative;
+        z-index: 1; /* Ensure the register card is above the overlay */
+    }
+
+    .register-card {
+        background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 100%;
+        max-width: 400px;
+        max-height: 90vh; /* Limit the height of the card */
+        overflow: hidden; /* Prevent content from overflowing */
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .register-card h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333333;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        overflow-y: auto; /* Make the form scrollable */
+        flex: 1; /* Allow the form to take up available space */
+        padding-right: 10px; /* Add padding for better spacing */
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        position: relative;
+        text-align: left;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #555555;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #6a11cb;
+        box-shadow: 0 0 5px rgba(106, 17, 203, 0.5);
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2575fc, #6a11cb);
+        transform: translateY(-2px);
+    }
+
+    .login-link {
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: #555555;
+    }
+
+    .login-link a {
+        color: #6a11cb;
+        font-weight: bold;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+        color: #2575fc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <h1>Register</h1>
+        <div class="form-container">
+            <form action="" method="post">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" id="username" required class="form-control" placeholder="Enter your username">
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" id="password" required class="form-control" placeholder="Enter your password">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password" class="form-label">Confirm Password</label>
+                    <input type="password" name="confirm_password" id="confirm_password" required class="form-control" placeholder="Confirm your password">
+                </div>
+                <div class="form-group">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" name="name" id="name" required class="form-control" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="qualification" class="form-label">Academic Qualification</label>
+                    <select name="qualification" id="qualification" required class="form-control">
+                        <option value="" disabled selected>Select your qualification</option>
+                        <option value="Bachelor's Degree">Post Graduate (UG+)</option>
+                        <option value="High School">Undergraduate (12+)</option>
+                        <option value="Master's Degree">Higher Secondary (10+)</option>
+                        <option value="Master's Degree">Secondary School (6-10)</option>
+                        <option value="PhD">PhD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="dob" class="form-label">Date of Birth</label>
+                    <input type="date" name="dob" id="dob" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Register" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+        <div class="login-link">
+            Already have an account? <a href="{{ url_for('login') }}">Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,298 @@
+{% extends 'user/user_layout.html' %}
+
+{% block title %}
+    User Summary
+{% endblock %}
+
+{% block content %}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    /* User Details Tiles */
+    .user-details-tiles {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 20px;
+        max-width: 300px;
+  
+    }
+
+    .user-tile {
+        background: linear-gradient(135deg, #333, #ad9494); /* Dark gradient */
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+    }
+
+    .user-tile:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .user-tile h5 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+
+    .user-tile p {
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* Leaderboard Section */
+    .leaderboard {
+        margin-top: 30px;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .leaderboard h3 {
+        margin-bottom: 20px;
+        text-align: center;
+        color: #6a11cb;
+    }
+
+    .leaderboard-table-container {
+        max-height: 300px; /* Fixed height for scrollable table */
+        overflow-y: auto;
+    }
+
+    .leaderboard table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 10px;
+    }
+
+    .leaderboard th {
+        background: #6a11cb;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        border-radius: 10px;
+    }
+
+    .leaderboard td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+        border-radius: 10px;
+    }
+
+    .leaderboard tr:hover {
+        background: #f1f1f1;
+    }
+
+    /* Chart Section */
+    .chart-container {
+        padding: 10px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chart-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-row {
+        margin-top: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-between;
+    }
+
+    .chart-item {
+        flex: 1 1 48%; /* Each chart takes up 48% of the row, leaving space for gaps */
+        max-width: 48%; /* Ensure charts don't exceed 48% width */
+    }
+</style>
+
+<div class="container">
+    <h1 class="text-center">User Summary</h1>
+
+    <!-- Leaderboard and User Details -->
+    <div class="row">
+        <!-- Leaderboard -->
+        <div class="col-md-8">
+            <div class="leaderboard">
+                <h3>Leaderboard</h3>
+                <div class="leaderboard-table-container">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Quiz Attempted</th>
+                                <th>Total Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in leaderboard %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.quizzes_attempted }}</td>
+                                <td>{{ (user.total_score) | round(2) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Details Tiles -->
+        <div class="col-md-4">
+            <div class="user-details-tiles">
+                <div class="user-tile">
+                    <h5>Name + User ID</h5>
+                    <p>{{ user_details.name }} (ID: {{ user_details.id }})</p>
+                </div>
+                <div class="user-tile">
+                    <h5>Leaderboard Position</h5>
+                    <p>{{ user_details.position }}</p>
+                </div>
+                <div class="user-tile">
+                    <h5>Number of Quizzes Attended</h5>
+                    <p>{{ user_details.quizzes_attended }}</p>
+                </div>
+                <div class="user-tile">
+                    <h5>Average Score</h5>
+                    <p>{{ (user_details.average_score | default(0)) | round(2) }}%</p>
+                </div>
+                <div class="user-tile">
+                    <h5>Subject-wise Average</h5>
+                    <ul>
+                        {% for subject, score in user_details.subject_scores.items() %}
+                        <li>{{ subject }}: {{ (score | default(0)) | round(2) }}%</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-row">
+        <!-- Subject-wise Performance Bar Graph -->
+        <div class="chart-container chart-item">
+            <h5 class="text-center">Subject-wise Performance</h5>
+            <canvas id="subjectPerformanceChart"></canvas>
+        </div>
+
+        <!-- Quiz-wise Performance Line Graph -->
+        <div class="chart-container chart-item">
+            <h5 class="text-center">Quiz-wise Performance</h5>
+            <canvas id="quizPerformanceChart"></canvas>
+        </div>
+
+        <!-- Month-wise Performance Line Graph -->
+        <div class="chart-container chart-item">
+            <h5 class="text-center">Month-wise Performance</h5>
+            <canvas id="monthPerformanceChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Subject-wise Performance Bar Graph
+    const subjectPerformanceCtx = document.getElementById('subjectPerformanceChart').getContext('2d');
+    const subjectPerformanceChart = new Chart(subjectPerformanceCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ subject_labels | safe }},
+            datasets: [{
+                label: 'Average Score (%)',
+                data: {{ subject_scores | safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, max: 100 }
+            }
+        }
+    });
+
+    // Quiz-wise Performance Line Graph
+    const quizPerformanceCtx = document.getElementById('quizPerformanceChart').getContext('2d');
+    const quizPerformanceChart = new Chart(quizPerformanceCtx, {
+        type: 'line',
+        data: {
+            labels: {{ quiz_labels | safe }},
+            datasets: [{
+                label: 'Score (%)',
+                data: {{ quiz_scores | safe }},
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, max: 100 }
+            }
+        }
+    });
+
+    // Month-wise Performance Line Graph
+    const monthPerformanceCtx = document.getElementById('monthPerformanceChart').getContext('2d');
+    const monthPerformanceChart = new Chart(monthPerformanceCtx, {
+        type: 'line',
+        data: {
+            labels: {{ month_labels | safe }},
+            datasets: [{
+                label: 'Average Score (%)',
+                data: {{ month_scores | safe }},
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, max: 100 }
+            }
+        }
+    });
+
+</script>
+{% endblock %}

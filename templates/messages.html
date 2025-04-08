@@ -1,0 +1,65 @@
+
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="top-center-message text-bg-{{ 'success' if 'success' in message|lower else 'danger' }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+<style>
+    .top-center-message {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #ffeb3b; /* Yellow background for all messages */
+        color: #000; /* Black text for contrast */
+        font-size: 1.5rem; /* Bigger font size */
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1050; /* Ensure it appears above other elements */
+        text-align: center;
+        animation: fadeOut 3s forwards; /* Fade out animation */
+        max-width: 600px; /* Set a maximum width */
+        min-width: 200px; /* Allow the width to adjust based on content */
+    }
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        80% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            display: none;
+        }
+    }
+</style>
+<script>
+    // Automatically show and hide the toasts
+    document.addEventListener('DOMContentLoaded', function () {
+        const toastElements = document.querySelectorAll('.toast');
+        toastElements.forEach(function (toastElement) {
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const messageElement = document.querySelector('.top-center-message');
+        if (messageElement) {
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000); // Disappear after 3 seconds
+        }
+    });
+
+</script>

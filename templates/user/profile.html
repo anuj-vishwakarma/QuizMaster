@@ -1,0 +1,185 @@
+{% extends "user/user_layout.html" %}
+
+{% block title %}
+    Profile Page
+{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('/static/images/profile.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        background-color: rgba(255, 255, 255, 0.6);
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        max-width: 600px;
+        width: 100%;
+        margin: 45px auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-pic {
+        margin-right: 20px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 5px solid #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile-pic img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .profile-details {
+        flex-grow: 1;
+    }
+
+    .profile-details h1 {
+        color: #FF5733;
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    .profile-details .black-text {
+        color: #333;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+    }
+
+    .btn-group {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .btn-group button,
+    .btn-group a {
+        margin-right: 15px;
+    }
+
+    .btn-group a:last-child {
+        margin-right: 0;
+    }
+
+    
+
+    .btn-outline-danger {
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        padding: 6px 12px;
+        border-radius: 5px;
+        text-decoration:wavy;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        background-color: rgb(255, 255, 255);
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+</style>
+
+
+    <div class="profile-header">
+        <div class="profile-pic">
+            <img src='https://api.dicebear.com/9.x/lorelei/svg?seed={{ user.username }}' alt="Profile Picture">
+        </div>
+        <div class="profile-details">
+            <h1>
+                Hello, <span class="black-text">@{{ user.username }}</span>
+            </h1>
+        </div>
+    </div>
+    
+    {% if user.is_admin ==0 %}
+    <form action="" method="post" class="form">
+        <div class="form-group">
+            <label for="cpassword" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" value="{{ user.username }}" id="cpassword" required>
+        </div>
+        <div class="form-group">
+            <label for="cpassword" class="form-label">Current Password</label>
+            <input type="password" name="cpassword" required class="form-control" >
+        </div>
+        <div class="form-group">
+            <label for="password" class="form-label">New Password</label>
+            <input type="test" name="password" required class="form-control"  >
+        </div>
+        <div class="form-group">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}">
+        </div>
+        <div class="form-group">
+            <label for="reach" class="form-label">Qualification</label>
+            <input type="text6" class="form-control"  name="qualification" value="{{ user.qualification }}">
+        </div>
+        <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" >
+        </div>
+        <div class="form-group">
+            <label for="dob" class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" id="dob" name="dob" value="{{ user.dob }}">
+        </div>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+        </div>
+    {% endif %}
+    
+    {% if user.is_admin ==1 %}
+    <form action="" method="post" class="form">
+        <div class="form-group">
+            <label for="cpassword" class="form-label">Current Password</label>
+            <input type="password" name="cpassword" class="form-control" id="cpassword" required>
+        </div>
+        <div class="form-group">
+            <label for="password" class="form-label">New Password</label>
+            <input type="password" name="password" class="form-control" id="password" required>
+        </div>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+        </div>
+    {% endif %}
+
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends 'admin/admin_layout.html' %}
+
+{% block title %}
+    Manage Users
+{% endblock %}
+
+{% block content %}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    .container {
+       
+        max-width: 800px; /* Reduce the width of the container */
+        display: flex;
+        justify-content: center; /* Center the container horizontally */
+        flex-direction: column; /* Ensure content stacks vertically */
+    }
+
+    h1, h2 {
+        color: #333333;
+        font-weight: medium;
+        text-align: left; /* Center the headings */
+        padding-inline: 30px;
+    }
+    .table-responsive {
+        overflow-x: auto; /* Allow horizontal scrolling on smaller screens */
+        margin-bottom: 20px; /* Add some space below the table */
+        max-width: 1000px; /* Set a max width for the table */
+        padding-inline: 30px;
+        justify-items: center;
+        min-width: 800px;
+    }
+
+    .table-container {
+        margin-top: 10px;
+        background: #ffffff;
+        padding-inline: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%; /* Ensure the table container takes full width of the parent */
+        
+    }
+    .table-container table{
+        justify-content: center;
+    }
+
+    .table {
+        margin: 0 auto; /* Center the table */
+        border-radius: 10px;
+        overflow: hidden;
+        width: 90%;
+        align-items: center; /* Reduce the width of the table */
+    }
+
+    .table-bordered {
+        border: 1px solid #dee2e6;
+        border-radius: 10px; /* Rounded border for the table */
+        justify-content: center;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1; /* Light hover effect */
+        cursor: pointer; /* Pointer cursor on hover */
+    }
+
+    .btn {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #ffffff;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: #ffffff;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    .h2.mt-4 {
+        margin-bottom: 1.5rem !important;
+        align-items: left;
+        padding-top: 10px;
+    }
+</style>
+
+
+<div class="container">
+    <h1 class="text-center">Manage Users</h1>
+
+    <!-- Active Users Table -->
+    <div class="table-container">
+        <h2 class="mt-4">Active Users</h2>
+        <div class="table-responsive d-flex justify-content-center">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>No. of Quizzes</th>
+                        <th>Total Score</th>
+                        <th>Avg Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.scores|length }}</td>
+                        <td>{{ (user.scores|map(attribute='score')|sum ) if user.scores|length > 0 else 0 }}</td>
+                        <td>{{ (user.scores|map(attribute='score')|sum / user.scores|length)|round(2) if user.scores|length > 0 else 0 }}</td>
+                        <td>
+                            <a href="{{ url_for('flag_user', user_id=user.id) }}" class="btn btn-sm btn-warning">Flag</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Flagged Users Table -->
+    <div class="table-container">
+        <h2 class="mt-4">Flagged Users</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>No. of Quizzes</th>
+                        <th>Total Score</th>
+                        <th>Avg Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in qualify %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.scores|length }}</td>
+                        <td>{{ (user.scores|map(attribute='score')|sum ) if user.scores|length > 0 else 0 }}</td>
+                        <td>{{ (user.scores|map(attribute='score')|sum / user.scores|length)|round(2) if user.scores|length > 0 else 0 }}</td>
+                        <td>
+                            <a href="{{ url_for('unflag_user', user_id=user.id) }}" class="btn btn-sm btn-success">Unflag</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

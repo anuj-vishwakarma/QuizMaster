@@ -1,0 +1,275 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Quizmaster
+{% endblock %}
+
+{% block style %}
+<style>
+    /* General Styling */
+    body {
+        background: url("{{ url_for('static', filename='login_background.jpg') }}") 
+                    no-repeat center center fixed;
+        background-size: cover;
+        height: 100vh; /* Ensure the body height matches the viewport */
+        margin: 0;
+        position: relative;
+        font-family: 'Roboto', sans-serif;
+        color: #ffffff;
+    }
+
+    /* Hazy Overlay Effect */
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8); /* Semi-transparent white overlay */
+        z-index: 0;
+    }
+
+    .landing-container {
+        padding: 50px 20px;
+        text-align: center;
+        position: relative;
+        z-index: 1; /* Ensure content is above the overlay */
+    }
+
+    .landing-container h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #6a11cb; /* Gradient start color */
+    }
+
+    .landing-container p {
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        color: #555;
+    }
+
+    /* Gray-White Gradient Tiles */
+    .feature-tile {
+        background: linear-gradient(135deg, #6110b8, #387ffa); /* Gray-white gradient */
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        color: #ffffff;
+        position: relative;
+        z-index: 1;
+    }
+
+    .feature-tile:hover {
+        transform: translateY(-10px); /* Lift effect */
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-tile h3 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #ffffff;
+    }
+
+    .feature-tile p {
+        font-size: 1rem;
+        color: #fafafa;
+    }
+
+    /* Feedback Section */
+    .feedback-section {
+        margin-top: 50px;
+        padding: 30px 0;
+        background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .feedback-section h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #6a11cb;
+    }
+
+    .feedback-slider {
+        display: flex;
+        overflow-x: auto;
+        gap: 20px;
+        padding: 20px;
+        scroll-behavior: smooth;
+    }
+
+    .feedback-tile {
+        background: linear-gradient(135deg,#787d83, #fafafa); /* Gradient background */
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        min-width: 300px;
+        color: rgb(22, 20, 20);
+        text-align: left;
+    }
+
+    .feedback-tile h4 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .feedback-tile p {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    .feedback-tile .rating {
+        color: gold;
+        font-size: 1.2rem;
+    }
+
+    .slider-buttons {
+        margin-top: 20px;
+    }
+
+    .slider-buttons button {
+        background: #6a11cb;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .slider-buttons button:hover {
+        background: #2575fc;
+    }
+
+    /* Footer Styling */
+    .footer {
+        background: #333;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        margin-top: 50px;
+        width: 100%;
+        position: relative;
+        left: 0;
+    }
+
+    .footer a {
+        color: white;
+        margin: 0 10px;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+        color: #6a11cb;
+    }
+
+    .footer p {
+        margin-top: 10px;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="landing-container">
+    <h1>Welcome to Quizmaster</h1>
+    <p>A platform to test your knowledge and grow your skills.</p>
+
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-tile">
+                    <h3>Attempt Quizzes</h3>
+                    <p>Challenge yourself with a variety of quizzes and test your knowledge.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-tile">
+                    <h3>Track Scores</h3>
+                    <p>Keep track of your progress and see how well you're doing.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-tile">
+                    <h3>Leaderboard</h3>
+                    <p>Compete with others and climb the leaderboard to showcase your skills.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-tile">
+                    <h3>Visual Insights</h3>
+                    <p>Analyze your performance with charts and detailed statistics.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-tile">
+                    <h3>Fast & Simple</h3>
+                    <p>Enjoy a seamless and user-friendly experience on our platform.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-tile">
+                    <h3>Join the Community</h3>
+                    <p>Be part of a growing community of learners and achievers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feedback Section -->
+<div class="feedback-section">
+    <h2>What Our Users Say</h2>
+    <div class="feedback-slider">
+        <div class="feedback-tile">
+            <h4>John Doe</h4>
+            <p>"Quizmaster has helped me improve my knowledge and skills tremendously!"</p>
+            <div class="rating">★★★★★</div>
+        </div>
+        <div class="feedback-tile">
+            <h4>Jane Smith</h4>
+            <p>"The leaderboard feature keeps me motivated to stay on top!"</p>
+            <div class="rating">★★★★★</div>
+        </div>
+        <div class="feedback-tile">
+            <h4>Emily Johnson</h4>
+            <p>"The visual insights are amazing for tracking my progress."</p>
+            <div class="rating">★★★★★</div>
+        </div>
+    </div>
+    <div class="slider-buttons">
+        <button onclick="scrollSlider(-300)">&#8249;</button>
+        <button onclick="scrollSlider(300)">&#8250;</button>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <div>
+        <a href="https://github.com/23f2001831" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="https://linkedin.com/in/kirandwip-paul-40812025a" target="_blank"><i class="fab fa-linkedin"></i></a>
+        <a href="mailto:kirandwip.info@gmail.com"><i class="fas fa-envelope"></i></a>
+    </div>
+    <p>Developed by kirandwip © 2025</p>
+</div>
+
+<script>
+    function scrollSlider(amount) {
+        const slider = document.querySelector('.feedback-slider');
+        slider.scrollBy({ left: amount, behavior: 'smooth' });
+    }
+</script>
+{% endblock %}

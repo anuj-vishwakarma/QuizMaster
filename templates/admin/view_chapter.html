@@ -1,0 +1,152 @@
+{% extends 'admin/admin_layout.html' %}
+
+{% block title %}
+    View the Quiz
+{% endblock %}
+
+{% block content %}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<style>
+    /* Quiz Modal Container */
+    .quiz-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    .quiz-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+
+    /* Table-Like Layout */
+    .quiz-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px 0;
+    }
+
+    .quiz-label {
+        font-weight: bold;
+        color: #2980b9;
+        font-size: 16px;
+        width: 50%;
+        text-align: right;
+        padding-right: 10px;
+    }
+
+    .quiz-field {
+        background-color: #e8f6ff;
+        border: 1px solid #3498db;
+        padding: 6px 12px;
+        border-radius: 5px;
+        min-width: 200px;
+        max-width: 200px;
+        text-align: center;
+        font-weight: bold;
+        color: #2c3e50;
+        overflow: hidden; /* Hide overflow */
+        word-wrap: break-word; /* Allow breaking long words */
+        white-space: normal; /* Ensure wrapping */
+        overflow-wrap: break-word; /* Additional word-break support */
+    }
+    
+/* Buttons Section */
+.quiz-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px; /* Add spacing between buttons */
+}
+
+.btn-close-custom {
+    background-color: #5dade2; /* Light blue */
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-close-custom:hover {
+    background-color: #2e86c1; /* Darker blue on hover */
+}
+
+.btn-edit {
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-edit:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.btn-start {
+    background-color: #28a745; /* Bootstrap success green */
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-start:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+</style>
+
+<!-- Quiz Modal Container -->
+<div class="quiz-container">
+    <div class="quiz-title">{{ chapter.name }}</div>
+
+    <div class="quiz-row">
+        <span class="quiz-label">ID :</span>
+        <span class="quiz-field">{{ chapter.id }}</span>
+    </div>
+
+    <div class="quiz-row">
+        <span class="quiz-label">Subject :</span>
+        <span class="quiz-field">{{ chapter.subject.name }}</span>
+    </div>
+
+    <div class="quiz-row">
+        <span class="quiz-label">Number of Questions :</span>
+        <span class="quiz-field">{{ chapter.no_of_questions }}</span>
+    </div>
+    <div class="quiz-row">
+        <span class="quiz-label">Description :</span>
+        <span class="quiz-field">{{ chapter.Description }}</span>
+    </div>
+    <div class="quiz-row">
+        <span class="quiz-label">Number of Quizes :</span>
+        <span class="quiz-field">{{ no_of_quizzes }}</span>
+    </div>
+
+    <!-- Buttons -->
+    <div class="quiz-buttons">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-close-custom">Close</a>
+        <a href="{{ url_for('edit_chapter', chapter_id = chapter.id) }}" class="btn btn-primary btn-edit">Edit</a>
+        <a href="{{ url_for('add_quiz', chapter_id=chapter.id) }}" class="btn btn-success btn-start">Add Quiz</a>
+    </div>
+</div>
+
+{% endblock %}

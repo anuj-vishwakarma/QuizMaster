@@ -1,0 +1,133 @@
+
+{% extends 'admin/admin_layout.html' %}
+{% block title %}
+{% endblock %}
+{% block content %}
+    <style>
+        h1 {
+            text-align: center;
+            color: #321710;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .form {
+            width: 50%;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #321710;
+            
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            font-size: 16px;
+            border: 1px solid #860505;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .container{
+            margin-top: 50px;
+            width: 70%;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+
+        }
+    </style>
+    {% if usage == 'add' %}
+    <div class="container">
+        <h1>Add Question</h1>
+        <form action="" class="form" method="post">
+            <div class="form-group">
+                <label for="title" class="form-label">Question Title</label>
+                <input type="text" name="title" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="question_statement" class="form-label">Question Statement</label>
+                <textarea name="question_statement" required class="form-control" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="option1" class="form-label">Option 1</label>
+                <input type="text" name="option1" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="option2" class="form-label">Option 2</label>
+                <input type="text" name="option2" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="option3" class="form-label">Option 3</label>
+                <input type="text" name="option3" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="option4" class="form-label">Option 4</label>
+                <input type="text" name="option4" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="correct_option" class="form-label">Correct Option</label>
+                <select name="correct_option" class="form-control" required>
+                    <option value="1">Option 1</option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option>
+                    <option value="4">Option 4</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Add Question</button>
+            </div>
+        </form>
+    </div>
+    {% elif usage == 'edit' %}
+    <div class="container">
+        <h1>Edit Question</h1>
+        <form action="" class="form" method="post">
+            <div class="form-group">
+                <label for="title" class="form-label">Question Title</label>
+                <input type="text" name="title" required class="form-control" value="{{ question.title }}">
+            </div>
+            <div class="form-group">
+                <label for="question_statement" class="form-label">Question Statement</label>
+                <textarea name="question_statement" required class="form-control" rows="4">{{ question.question_statement }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="option1" class="form-label">Option 1</label>
+                <input type="text" name="option1" required class="form-control" value="{{ question.option1 }}">
+            </div>
+            <div class="form-group">
+                <label for="option2" class="form-label">Option 2</label>
+                <input type="text" name="option2" required class="form-control" value="{{ question.option2 }}">
+            </div>
+            <div class="form-group">
+                <label for="option3" class="form-label">Option 3</label>
+                <input type="text" name="option3" required class="form-control" value="{{ question.option3 }}">
+            </div>
+            <div class="form-group">
+                <label for="option4" class="form-label">Option 4</label>
+                <input type="text" name="option4" required class="form-control" value="{{ question.option4 }}">
+            </div>
+            <div class="form-group">
+                <label for="correct_option" class="form-label">Correct Option</label>
+                <select name="correct_option" class="form-control" required>
+                    <option value="1" {% if question.correct_option == 'option1' %}selected{% endif %}>Option 1</option>
+                    <option value="2" {% if question.correct_option == 'option2' %}selected{% endif %}>Option 2</option>
+                    <option value="3" {% if question.correct_option == 'option3' %}selected{% endif %}>Option 3</option>
+                    <option value="4" {% if question.correct_option == 'option4' %}selected{% endif %}>Option 4</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Update Question</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+{% endblock %}

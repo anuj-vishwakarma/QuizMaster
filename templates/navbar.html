@@ -1,0 +1,93 @@
+<head>
+  <style>
+    /* Navbar Styling */
+    .navbar-custom {
+        background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        padding: 10px 20px;
+    }
+
+    .navbar-custom .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #6a11cb; /* Gradient start color */
+        text-transform: uppercase;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-custom .navbar-brand:hover {
+        color: #2575fc; /* Gradient end color */
+    }
+
+    .navbar-custom .nav-link {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #555555; /* Subtle gray */
+        margin-right: 15px;
+        transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .navbar-custom .nav-link:hover {
+        color: #6a11cb; /* Gradient start color */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    .navbar-custom .btn-custom {
+        font-size: 1rem;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(135deg, #6a11cb, #2575fc); /* Gradient background */
+        border: none;
+        border-radius: 8px;
+        padding: 8px 20px;
+        margin-left: 10px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .navbar-custom .btn-custom:hover {
+        background: linear-gradient(135deg, #2575fc, #6a11cb); /* Reverse gradient on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    .navbar-custom .navbar-toggler {
+        border: none;
+    }
+
+    .navbar-custom .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%2860,60,60,1%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .navbar-custom .nav-link {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+
+        .navbar-custom .btn-custom {
+            width: 100%; /* Full width for buttons on smaller screens */
+            margin-left: 0;
+            margin-bottom: 10px;
+        }
+    }
+  </style>
+</head>
+<nav class="navbar navbar-expand-lg navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">Quizmaster</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a href="{{ url_for('login') }}" class="btn btn-custom">Login</a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('register') }}" class="btn btn-custom">Register</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

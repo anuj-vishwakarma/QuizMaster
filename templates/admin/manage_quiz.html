@@ -1,0 +1,123 @@
+{% extends 'admin/admin_layout.html' %}
+{% block title %}
+{% endblock %}
+{% block content %}
+    <style>
+        h1 {
+            text-align: center;
+            color: #321710;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .form {
+            width: 50%;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #321710;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            font-size: 16px;
+            border: 1px solid #860505;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+
+    {% if usage == 'add' %}
+    <div class="container">
+        <h1>Add Quiz</h1>
+        <form action="" class="form" method="post">
+            <div class="form-group">
+                <label for="quiz_name" class="form-label">Quiz Title</label>
+                <input type="text" name="quiz_name" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="chapter_id" class="form-label">Chapter</label>
+                <p class="form-control" style="background-color: #f8f9fa; border: 1px solid #ccc;">
+                    {{ chapter.name }}
+                </p>
+                <input type="hidden" name="chapter_id" value="{{ chapter.id }}">
+            </div>
+            <div class="form-group">
+                <label for="start_date" class="form-label">Start Date</label>
+                <input type="date" name="start_date" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="end_date" class="form-label">End Date</label>
+                <input type="date" name="end_date" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="time_duration" class="form-label">Time Duration</label>
+                <input type="time" name="time_duration" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="is_active" class="form-label">Is Active</label>
+                <select name="is_active" class="form-control">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Add Quiz</button>
+            </div>
+        </form>
+    </div>
+    {% elif usage == 'edit' %}
+    <div class="container">
+        <h1>Edit "{{ quiz.name }}"</h1>
+        <form action="" class="form" method="post">
+            <div class="form-group">
+                <label for="quiz_name" class="form-label">Quiz Title</label>
+                <input type="text" name="quiz_name" required class="form-control" value="{{ quiz.name }}">
+            </div>
+            <div class="form-group">
+                <label for="chapter_id" class="form-label">Chapter ID</label>
+                <input type="number" name="chapter_id" required class="form-control" value="{{ quiz.chapter_id }}">
+            </div>
+            <div class="form-group">
+                <label for="start_date" class="form-label">Start Date</label>
+                <input type="date" name="start_date" class="form-control" value="{{ quiz.start_date }}">
+            </div>
+            <div class="form-group">
+                <label for="end_date" class="form-label">End Date</label>
+                <input type="date" name="end_date" class="form-control" value="{{ quiz.end_date }}">
+            </div>
+            <div class="form-group">
+                <label for="time_duration" class="form-label">Time Duration</label>
+                <input type="time" name="time_duration" class="form-control" value="{{ quiz.time_duration }}">
+            </div>
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="4">{{ quiz.description }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="is_active" class="form-label">Is Active</label>
+                <select name="is_active" class="form-control">
+                    <option value="true" {% if quiz.is_active %}selected{% endif %}>Yes</option>
+                    <option value="false" {% if not quiz.is_active %}selected{% endif %}>No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Update Quiz</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,372 @@
+{% extends 'user/user_layout.html' %}
+
+{% block title %}
+    Quiz Review
+{% endblock %}
+
+{% block content %}
+<style>
+        .spinner {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+    
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    .container.mt-4 {
+        margin-top: 50px;
+        width: 70%;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    .question-tile {
+        background: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .question-number {
+        background: #3498db;
+        color: white;
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        margin-right: 10px;
+    }
+    .question-statement {
+        margin: 10px 0;
+        padding-left: 40px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+    .options div {
+        margin: 8px 0;
+        padding-left: 40px;
+    }
+    .chosen-option {
+        font-weight: bold;
+        color: #007bff;
+        margin-top: 10px;
+        padding-left: 40px;
+    }
+    .correct-answer {
+        font-size: large;
+        color: #28a745;
+        font-weight: bold;
+        margin-top: 10px;
+        padding-left: 40px;
+    }
+    .score {
+        margin-top: 10px;
+        font-weight: bold;
+        text-align: right;
+    }
+    .total-score {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: right;
+    }
+    .search-bar-container {
+        position: relative;
+    }
+  
+    .search-input {
+        border-radius: 25px; /* Rounded edges */
+        padding: 10px 20px;
+        border: 1px solid #ced4da;
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+  
+    .search-input:focus {
+        outline: none;
+        border-color: #3498db; /* Blue border on focus */
+        box-shadow: 0 0 8px rgba(52, 152, 219, 0.5); /* Blue glow */
+    }
+  
+    .search-btn {
+        background-color: #3498db; /* Modern blue color */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Circular button */
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+  
+    .search-btn:hover {
+        background-color: #1e88e5; /* Darker blue on hover */
+        transform: scale(1.1); /* Slight zoom effect */
+    }
+  
+    .search-btn i {
+        font-size: 1.2rem; /* Slightly larger search icon */
+    }
+    .btn-close-custom {
+        background-color: #e27865; /* Bootstrap secondary gray */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-close-custom:hover {
+        background-color: #5a6268; /* Darker gray on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+    .correct-option {
+        color: #28a745; /* Green */
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .incorrect-option {
+        color: #dc3545; /* Red */
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    .not-attempted {
+        color: #f15540; /* Gray */
+        font-weight: bold;
+        margin-top: 10px;
+        padding-left: 40px;
+    }
+        .explanation-text {
+            font-size: 0.9rem; /* Small font size */
+            color: #6c757d; /* Muted text color */
+            margin-top: 10px;
+        }
+    
+        .text-primary {
+            color: #007bff !important; /* Primary blue color */
+        }
+    
+        .text-danger {
+            color: #dc3545 !important; /* Danger red color */
+        }
+    
+        .fw-bold {
+            font-weight: bold !important; /* Bold text */
+        }
+    
+        .d-flex {
+            display: flex !important; /* Flexbox for alignment */
+        }
+    
+        .align-items-center {
+            align-items: center !important; /* Center alignment */
+        }
+    
+        .gap-2 {
+            gap: 0.5rem !important; /* Spacing between elements */
+        }
+    
+        .spinner-border {
+            width: 1.5rem !important; /* Spinner width */
+            height: 1.5rem !important; /* Spinner height */
+        }
+    
+        .mt-2 {
+            margin-top: 0.5rem !important; /* Top margin */
+        }
+    
+        .text-muted {
+            color: #6c757d !important; /* Muted text color */
+        }
+        .explanation-container {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+    
+        .explanation-container p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+    
+        .explanation-container p strong {
+            color: #333;
+        }
+    
+        .explanation-container ul {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.6;
+        }
+    
+        .explanation-container ul li {
+            margin-bottom: 8px;
+        }
+        .dropdown-scrollable {
+            max-height: 200px; /* Set a fixed height for the dropdown */
+            overflow-y: auto; /* Enable vertical scrolling */
+            background-color: #f8f9fa; /* Light background for better readability */
+            border: 1px solid #ddd; /* Add a border */
+            border-radius: 8px; /* Rounded corners */
+            padding: 10px; /* Add padding inside the dropdown */
+        }
+    
+        .dropdown-scrollable li {
+            margin-bottom: 8px; /* Add spacing between items */
+        }
+    
+        .dropdown-scrollable li a {
+            color: #555; /* Text color */
+            text-decoration: none; /* Remove underline */
+            transition: color 0.3s ease;
+        }
+    
+        .dropdown-scrollable li a:hover {
+            color: #007bff; /* Highlight color on hover */
+        }
+</style>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Quiz Review</h2>
+    <p class="total-score">Total Score: {{ score.score }}/ 100</p>
+
+    {% for question in questions %}
+    <div class="question-tile">
+        <h5><span class="question-number">{{ loop.index }}</span> Q Title :  {{ question.title }} 
+            <p class="question-statement">Q Statement : {{ question.question_statement }}</p></h5>
+        
+        <div class="options">
+            <p class="question-statement">Chosen Option ( Blue color) : </p>
+            {% set chosen = score.submitted_answers.get(question.id|string, "0") %}
+            {% for i in range(1, 5) %}
+            <div>
+                <input type="radio" disabled {% if i|string == chosen %} checked {% endif %}>
+                <label 
+                    {% if i|string == chosen %}
+                        class="{% if i|string == question.correct_option %}correct-option{% else %}incorrect-option{% endif %}"
+                    {% endif %}>
+                    {{ question['option' ~ i] }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% if chosen == 'Not Attempted' %}
+            <p class="not-attempted">NOT ATTEMPTED</p>
+        {% endif %}
+        <div class="correct-answer">
+            Correct Answer: {{ question['option' ~ question.correct_option] }} ( Option {{ question.correct_option }})
+        </div>
+        <div class="score">
+            {% if chosen == question.correct_option%}
+                <p> Score : 1 </p>
+            {% else %}
+                <p> Score : 0 </p>
+            {% endif %}
+        </div>
+        <button class="btn btn-primary explain-btn" data-question-id="{{ question.id }}">Explain with AI</button>
+        <div class="explanation-container">
+            <!-- Explanation Text -->
+            <p class="explanation-text text-muted small" id="explanation-{{ question.id }}" style="display:none;"></p>
+    
+            
+            <!-- Google Books Link -->
+            <a href="#" target="_blank" id="books-link-{{ question.id }}" 
+               class="text-decoration-none fw-bold text-primary d-flex align-items-center gap-2" 
+               style="display:none;">
+                <i class="fas fa-book-open"></i> 📚 Find Books on Google
+            </a>
+            <!-- YouTube Link -->
+            <a href="#" target="_blank" id="youtube-link-{{ question.id }}" 
+               class="text-decoration-none fw-bold text-danger d-flex align-items-center gap-2" 
+               style="display:none;">
+                <i class="fab fa-youtube"></i> 🎥 Watch on YouTube
+            </a>
+            <p class="explanation-text text-muted small" id="book-recommendations-{{ question.id }}" style="display:none;"></p>
+            <!-- Loading Spinner -->
+            <div class="spinner-border text-info mt-2" id="loading-{{ question.id }}" 
+                 style="display:none; width: 1.5rem; height: 1.5rem;"></div>
+        </div>
+  
+    </div>
+    {% endfor %}
+</div>
+<div class="text-center mt-4">
+    <a href="{{ url_for('scores') }}" class="btn btn-secondary btn-close-custom">Close</a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.explain-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const questionId = this.getAttribute('data-question-id');
+                const explanationElement = document.getElementById(`explanation-${questionId}`);
+                const booksLinkElement = document.getElementById(`books-link-${questionId}`);
+                const bookRecommendationsElement = document.getElementById(`book-recommendations-${questionId}`);
+                const youtubeLinkElement = document.getElementById(`youtube-link-${questionId}`);
+                const loadingIndicator = document.getElementById(`loading-${questionId}`);
+
+                // Show loading animation
+                loadingIndicator.style.display = 'inline-block';
+
+                // Fetch explanation from the server
+                fetch(`/explain_with_ai/${questionId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        loadingIndicator.style.display = 'none'; // Hide loading animation
+
+                        // Render explanation
+                        explanationElement.innerHTML = `<strong>Explanation:</strong> ${data.explanation || 'Explanation not available.'}`;
+                        explanationElement.style.display = 'block';
+
+                        // Render Google Books link
+                        if (data.google_books_link) {
+                            booksLinkElement.href = data.google_books_link;
+                            booksLinkElement.style.display = 'flex';
+                        } else {
+                            booksLinkElement.style.display = 'none';
+                        }
+                        // Render YouTube link
+                        if (data.youtube_search_link) {
+                            youtubeLinkElement.href = data.youtube_search_link;
+                            youtubeLinkElement.style.display = 'flex';
+                        } else {
+                            youtubeLinkElement.style.display = 'none';
+                        }
+                        bookRecommendationsElement.innerHTML = `<strong>Book Recommendations:</strong> ${data.book_recommendations || 'Explanation not available.'}`;
+                        bookRecommendationsElement.style.display = 'block';
+                    })
+                    .catch(error => {
+                        loadingIndicator.style.display = 'none';
+                        explanationElement.innerHTML = `<strong>Error:</strong> Unable to fetch explanation. Please try again later.`;
+                        explanationElement.style.display = 'block';
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    });
+</script>
+
+{% endblock %}
